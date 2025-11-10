@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+</head>
+<body>
+    {% include 'supernova/navbar.html' %}
+    <div class="section">
+        <h1 class="title">Flashcards</h1>
+        <h3 class="title is-4"> Search </h3> 
+        <form action="{% url 'supernova:fcs_search' %}" method="get">
+            <div class="field has-addons">
+                <div class="control has-icons-right">
+                    <input class="input" type="text" name="search" placeholder="key words">
+                    <span class="icon is-small is-right">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </div>
+                <div class="control">
+                    <input type="submit" class="button is-success">
+                </div>
+            </div>
+        </form>
+        <h3 class="title is-5"> Your Flashcards </h3>
+        <div class="columns is-multiline">
+            {% for flashcard in user_flashcards %}
+                {% include 'supernova/fc_preview.html' %}
+            {% endfor %}
+        </div>
+        <p> or create a <a href="{% url 'supernova:flashcard_set' %}"> new flashcard set </a></p>
+        <h3 class="title is-5"> All Flashcards </h3>
+        <div class="columns is-multiline">
+            {% for flashcard in flashcards %}
+                {% include 'supernova/fc_preview.html' %}
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

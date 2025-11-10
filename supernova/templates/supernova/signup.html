@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <title>Sign Up</title>
+</head>
+<body>
+    <div class="section">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <h1 class="title">Revology sign up here</h1>
+                <form class="box" action="{% url 'supernova:signup' %}" method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label class="label">Firstname</label>
+                        <div class="control">
+                            <input class="input" type="text" name="firstname" id="firstname" placeholder="Firstname">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Lastname</label>
+                        <div class="control">
+                            <input class="input" type="text" name="firstname" id="lastname" placeholder="Lastname">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input class="input" type="email" name="email" id="email" placeholder="email@example.com">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Username</label>
+                        <div class="control">
+                            <input class="input" type="text" name="username" id="username" placeholder="Username">
+                        </div>
+                    </div>
+                
+                    <div class="field">
+                        <label class="label">Password</label>
+                        <div class="control">
+                            <input class="input" type="password" placeholder="********" />
+                        </div>
+                    </div>
+                
+                    <button class="button is-success">Sign up</button>
+                </form>
+                <p>Already have an account? <a href="{% url 'supernova:login' %}"> Login </a></p>
+            </div>
+        </div>
+    </div>  
+</body>
+</html>

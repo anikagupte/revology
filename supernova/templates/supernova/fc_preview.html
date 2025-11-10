@@ -1,0 +1,11 @@
+<div class="column is-one-quarter">
+    <div class="box">
+        <div class="content">
+            <p>
+                <strong><a href="{% url 'supernova:view_flashcards' flashcard.id %}"> {{ flashcard.title }} </a></strong> · {{ flashcard.subject }}
+                <p><small>{{ flashcard.date_created }} @{{ flashcard.author}} </small></p>
+                no. of cards
+            </p>
+        </div>
+    </div>
+</div>

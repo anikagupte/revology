@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{user.username}}'s Page</title>
+</head>
+<body>
+    {% include 'supernova/navbar.html' %}
+    <div class="section">
+        <h1 class="title">{{user.username}}'s Profile</h1>
+        <h2 class="title is-5">Notes</h2>
+        <div class="columns is-multiline">
+            {% for note in notes %}
+                {% include 'supernova/note_preview.html' %}
+            {% endfor %}
+        </div>
+        <h2 class="title is-5">Flashcards</h2>
+        <div class="columns is-multiline">
+            {% for flashcard in flashcards %}
+                {% include 'supernova/fc_preview.html' %}
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

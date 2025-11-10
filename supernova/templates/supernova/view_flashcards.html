@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Set</title>
+    {% load flashcards %}
+</head>
+
+<body>
+    {% include 'supernova/navbar.html' %}
+    <div class="section">
+        <!-- TODO: flashcard filtering system - filter flashcards (at top of page) and only print flashcards of certain colours (default is 3) -->
+        <!-- page refreshes when rating a card which brings the user to the top every time -->
+        <div class="columns is-centered">
+            <div class="column is-two-fifths">
+                <h1 class="title">{{ fcs.title }}</h1>
+                <h3><a href="{% url 'supernova:user_profile' fcs.author %}"> {{ fcs.author }} </a> · {{ fcs.date_created }}</h3>
+                <a href="{% url 'supernova:filter_flashcards' 'R' %}">red</a>
+                <a href="{% url 'supernova:filter_flashcards' 'A' %}">amber</a>
+                <a href="{% url 'supernova:filter_flashcards' 'G' %}">green</a>
+                {% for flashcard in fcs.flashcards.all %}
+                {% if flashcard|get_rag:request.user == 'G' %}
+                    <div onclick="toggle(this)">
+                        <div class="box">
+                            <p id='text' data-front="{{flashcard.front_of_card}}" data-back="{{flashcard.back_of_card}}">
+                                {{ flashcard.front_of_card }}
+                            </p>
+                            {% if flashcard|get_rag:request.user == 'R' %}
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=R"><span class="icon has-text-danger"><i
+                                        class="fa-solid fa-circle"></i></span></a>
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=A"><span class="icon has-text-warning"><i
+                                        class="fa-regular fa-circle"></i></span></a>
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=G"><span class="icon has-text-success"><i
+                                        class="fa-regular fa-circle"></i></span></a>
+                            {% elif flashcard|get_rag:request.user == 'A' %}
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=R"><span class="icon has-text-danger"><i
+                                        class="fa-regular fa-circle"></i></span></a>
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=A"><span class="icon has-text-warning"><i
+                                        class="fa-solid fa-circle"></i></span></a>
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=G"><span class="icon has-text-success"><i
+                                        class="fa-regular fa-circle"></i></span></a>
+                            {% else %}
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=R"><span class="icon has-text-danger"><i
+                                        class="fa-regular fa-circle"></i></span></a>
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=A"><span class="icon has-text-warning"><i
+                                        class="fa-regular fa-circle"></i></span></a>
+                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=G"><span class="icon has-text-success"><i
+                                        class="fa-solid fa-circle"></i></span></a>
+                            {% endif %}
+                            {% if request.user == fcs.author %}
+                                <div class="columns">
+                                    <div class="column is-offset-11">
+                                        <a href="{% url 'supernova:delete_fc' flashcard.id %}"> <i class="fa-solid fa-trash"></i></a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if fcs.author == request.user %}
+            <div class="column is-one-fifth">
+                <h3 class="subtitle">Add a new card</h3>
+                <form class="box" action="{% url 'supernova:view_flashcards' fcs.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label class="label">Front of Card</label>
+                        <div class="control">
+                            <input class="input" type="text" name="front_of_card" placeholder="" required>                      
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Subject</label>
+                        <div class="control">
+                            <input class="input" type="text" name="back_of_card" placeholder="" required>                      
+                        </div>
+                    </div>
+                    <input type="submit" class="button is-success" value="Create">
+                </form>
+                <div>
+                    <form action="{% url 'supernova:reset_ratings' fcs.id %}" method="get">
+                        {% csrf_token %}
+                        <input type="submit" class="button" value="RESET RATINGS">
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- every time user updates ranking, the filter should be checked to see if the card should remain visible -->
+        <!-- if still visibile, page should stay on current card, else should move to next visible card in deck -->
+
+        <script>
+            function toggle(elem) {
+                const p = elem.querySelector('#text');
+                const current = p.textContent.trim();
+                const front = p.dataset.front;
+                const back = p.dataset.back;
+
+                p.textContent = (current == front) ? back : front;
+
+            }
+        </script>
+
+</body>
+
+</html>

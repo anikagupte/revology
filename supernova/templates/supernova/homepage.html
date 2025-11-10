@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+</head>
+<body>
+    {% if request.user.username %}
+    {% include 'supernova/navbar.html' %}
+    <section class="section">
+        <p class="title">Hello, {{request.user.first_name}}</p>
+        <p class="subtitle"> Welcome to Revology!</p>
+        <div class="block">
+            <p class="subtitle">Your Notes</p>
+            <div class="columns is-multiline">
+                {% for note in user_notes %}
+                    {% include 'supernova/note_preview.html' %}
+                {% endfor %}
+            </div>
+        </div>
+        <!-- create notes button -->
+        <p class="subtitle">Your Flashcards</p>
+        <div class="columns is-multiline">
+            {% for flashcard in user_flashcards %}                    
+                {% include 'supernova/fc_preview.html' %}
+            {% endfor %}
+            </div>
+        <!-- create flashcards button -->
+    {% else %}
+        <p>You are not signed in. <a href="{% url 'supernova:login' %}"> Login here </a></p>
+    {% endif %}
+    </section>
+</body>
+</html>

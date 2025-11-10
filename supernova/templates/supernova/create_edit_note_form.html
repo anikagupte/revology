@@ -1,0 +1,63 @@
+
+<form class="box" action= {% if note %} "{% url 'supernova:edit_notes' note.id%}" {% else %} "{% url 'supernova:create_notes' %}" {% endif %} method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+    <div class="columns">
+        <div class="column is-one-third">
+            <div class="field">
+                <label class="label">Title</label>
+                <div class="control">
+                    {% if note %}
+                        <input class="input" type="text" name="title" value="{{note.title}}" required>
+                    {% else %}
+                        <input class="input" type="text" name="title" placeholder="e.g. Radioactivity" required>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="column is-one-third">
+            <div class="field">
+                <label class="label">Subject</label>
+                <div class="control">
+                    {% if note %}
+                        <input class="input" type="text" name="subject" value="{{note.subject}}" required>
+                    {% else %}
+                        <input class="input" type="text" name="subject" placeholder="e.g. Physics" required>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">Notes Content</label>
+        <div class="control">
+            {% if note %}
+                <textarea class="textarea" name="notes_content" id="" cols="30" rows="14" required>{{note.notes_content}}</textarea>
+            {% else %}
+                <textarea class="textarea" name="notes_content" id="" cols="30" rows="14" placeholder="Start typing content here here..." required></textarea>
+            {% endif %}
+        </div>
+    </div>
+    <div class="file">
+        <label class="file-label">
+            <input class="file-input" type="file" name="noteimage" id="noteimage" accept="image/*"/>
+            <span class="file-cta">
+                <span class="file-icon">
+                    <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label"> Cover image (optional) </span>
+            </span>
+        </label>
+        {% if note.image %}
+            <figure class="image is-32x32"><img src="{{note.image.url}}" alt=""></figure>
+            <p class="has-text-danger">Warning: uploading a cover image will replace the existing one</p>
+        {% endif %}</div>
+        <div class="control">
+            {% if note %}
+                <input type="submit" class="button is-success" value="Save">
+            {% else %}
+                <input type="submit" class="button is-success" value="Create">
+            {% endif %}
+        </div>
+    </div>  
+</form>

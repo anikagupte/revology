@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes Library</title>
+</head>
+<body>
+    {% include 'supernova/navbar.html' %}
+    <div class="section">
+        <h1 class="title">Notes Library</h1>
+        <h3 class="title is-4"> Search </h3> 
+        <form action="{% url 'supernova:notes_search' %}" method="get">
+            <div class="field has-addons">
+                <div class="control has-icons-right">
+                    <input class="input" type="text" name="search" placeholder="key words">
+                    <span class="icon is-small is-right">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </div>
+                <div class="control">
+                    <input type="submit" class="button is-success">
+                </div>
+            </div>
+        </form>
+        <div class="section">
+            <div class="columns is-multiline">
+                {% for subject in subjects %}
+                    <div class="column is-2">
+                        <div class="box">
+                            <p><a href = "{% url 'supernova:subject_notes' subject.name %}"> {{ subject.name }} </a></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <h3>Can't find what you're looking for? Create a new note<a href="{% url 'supernova:create_notes' %}"> here</a>.</h3>
+    </div>
+
+</body>
+</html>

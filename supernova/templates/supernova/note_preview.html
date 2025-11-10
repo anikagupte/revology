@@ -1,0 +1,29 @@
+{% load notes %}
+
+<div class="column is-one-third">
+    <div class="box">
+        <article class="media">
+          <div class="media-left">
+            <figure class="image is-64x64">
+                {% if note.image %}
+                    <img src="{{note.image.url}}" alt="cover image">
+                {% elif note.subject.name == "Physics" %}
+                    <img src="https://static.vecteezy.com/system/resources/previews/006/747/166/original/a-flat-style-of-quantum-physics-atom-editable-icon-vector.jpg" alt="Image" />
+                {% else %}
+                    <img src="https://png.pngtree.com/png-clipart/20231006/original/pngtree-circle-loading-icon-vector-png-image_13280533.png" alt="Image" />
+                {% endif %}
+                </figure>
+            </div>
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong><a href="{% url 'supernova:view_note' note.id %}"> {{ note.title }} </a></strong> · {{ note.subject }}
+                        <p><small>{{ note.date_uploaded }} @{{ note.author}} </small></p>
+                        First few words of note
+                        <!-- note|preview_note:20 -->
+                    </p>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>

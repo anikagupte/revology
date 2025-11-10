@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+<script src="https://kit.fontawesome.com/bb623d3cac.js" crossorigin="anonymous"></script>
+{% load static %}
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="{% url 'supernova:homepage' %}">
+        <img src="{% static 'images/REVOLOGY.png' %}" alt="Logo"/>
+      </a>
+  
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        
+        <a class="navbar-item" href="{% url 'supernova:homepage' %}"> Home </a>
+
+        <a class="navbar-item" href="{% url 'supernova:notes_library' %}"> Notes Library </a>
+        
+        <a class="navbar-item" href="{% url 'supernova:browse_flashcards' %}"> Flashcards </a>
+  
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            More
+          </a>
+  
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="{% url 'supernova:create_notes' %}">
+              Create Notes
+            </a>
+            <a class="navbar-item" href="{% url 'supernova:flashcard_set' %}">
+              Create Flashcards
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item" href="{% url 'supernova:resources' %}">
+                Extra Resources
+            </a>
+          </div>
+        </div>
+      </div>
+  
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-success" href="{% url 'supernova:logout' %}">
+              <strong>Sign Out</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>

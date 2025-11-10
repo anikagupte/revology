@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="section">
+        <div class="columns is-centered">
+          <div class="column is-half">
+              <h1 class="title">Revology login</h1>
+              <form class="box" action="{% url 'supernova:login' %}" method="post">
+                  {% csrf_token %}
+                  <div class="field">
+                      <label class="label">Username</label>
+                      <div class="control">
+                          <input class="input" type="text" name="username" id="username" placeholder="Username">
+                      </div>
+                  </div>
+            
+                  <div class="field">
+                      <label class="label">Password</label>
+                      <div class="control">
+                          <input class="input" type="password" name="password" id="password" placeholder="********">
+                      </div>
+                  </div>
+                  <button class="button is-success">Log in</button>
+              </form>
+              <p>New to Revology? <a href="{% url 'supernova:signup' %}"> Sign up </a></p>
+          </div>
+      </div>
+    </div>
+</body>
+</html>

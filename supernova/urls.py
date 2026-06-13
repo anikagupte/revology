@@ -25,5 +25,5 @@ urlpatterns = [
     path("reset_ratings/<int:fcs_id>", views.reset_ratings, name="reset_ratings"),
     path("edit_notes/<int:noteid>", views.edit_notes, name="edit_notes"),
     path("delete_fc/<int:fc_id>", views.delete_fc, name='delete_fc'),
-    path("filter_flashcards/<str:colour>", views.filter_flashcards, name='filter_flashcards')
+    # path("filter_flashcards/<str:colour>", views.filter_flashcards, name='filter_flashcards')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from .models import Subject, Notes, Flashcard_set, Flashcard, Status, Flashcard_rating
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def homepage(request):
 
     # find user
@@ -56,15 +58,18 @@ def log_in(request):
         )
 
 
+@login_required
 def log_out(request):
     logout(request)
     return redirect('supernova:login')
 
 
+@login_required
 def notes_library(request):
     return render(request, "supernova/notes_library.html", {'subjects': Subject.objects.all()})
 
 
+@login_required
 def subject_notes(request, subject_name):
 
     # display notes of one subject
@@ -72,6 +77,7 @@ def subject_notes(request, subject_name):
     return render(request, "supernova/subject_notes.html", {'subject': subject, 'notes': subject.notes_set.order_by('-date_uploaded')})
 
 
+@login_required
 def create_notes(request):
     if request.method == 'POST':
         title = request.POST.get('title', '')
@@ -101,6 +107,7 @@ def create_notes(request):
     return render(request, 'supernova/create_notes.html')
 
 
+@login_required
 def edit_notes(request, noteid):
     n = Notes.objects.get(id=noteid)
     if request.user == n.author:
@@ -136,11 +143,13 @@ def edit_notes(request, noteid):
         return render(request, "supernova/note.html", {'note': n})
 
 
+@login_required
 def view_note(request, note_id):
     note = Notes.objects.get(id=note_id)
     return render(request, "supernova/note.html", {'note': note})
 
 
+@login_required
 def flashcard_set(request):
     if request.method == 'POST':
         title = request.POST.get('title', '')
@@ -166,6 +175,7 @@ def flashcard_set(request):
     return render(request, "supernova/flashcard_set.html")
 
 
+@login_required
 def view_flashcards(request, flashcardset_id):
     fcs = Flashcard_set.objects.get(id=flashcardset_id)
 
@@ -179,6 +189,7 @@ def view_flashcards(request, flashcardset_id):
 
         # set default rank as red
         s = Status(colour="R")
+        
         ranking = Flashcard_rating(user=request.user, flashcard=flashcard, status=s)
         ranking.save()
 
@@ -187,6 +198,7 @@ def view_flashcards(request, flashcardset_id):
     return render(request, 'supernova/view_flashcards.html', {'fcs': fcs})
 
 
+@login_required
 def browse_flashcards(request):
 
     # all flashcard sets
@@ -197,6 +209,7 @@ def browse_flashcards(request):
     return render(request, "supernova/browse_flashcards.html", {'flashcards': fcs, 'user_flashcards': user_fcs})
 
 
+@login_required
 def rag(request, cardid):
     
     # update rank of flashcard
@@ -214,6 +227,7 @@ def rag(request, cardid):
     return redirect(request.META['HTTP_REFERER'])
 
 
+@login_required
 def user_profile(request, user):
 
     # find user
@@ -241,6 +255,7 @@ STOP_WORDS = [
 
 
 from django.db.models import Q
+@login_required
 def notes_search(request):
 
     # get search results
@@ -267,6 +282,7 @@ def notes_search(request):
     return render(request, "supernova/search.html", {'results': results})
 
 
+@login_required
 def fcs_search(request):
 
     # get search results
@@ -295,6 +311,7 @@ def fcs_search(request):
 # have an option to search for a user
 
 
+@login_required
 def reset_ratings(request, fcs_id):
 
     # reset all ratings of a flashcard set back to red
@@ -310,6 +327,7 @@ def reset_ratings(request, fcs_id):
     return redirect(request.META['HTTP_REFERER'])
 
 
+@login_required
 def delete_fc(request, fc_id):
 
     # get flashcard
@@ -320,11 +338,11 @@ def delete_fc(request, fc_id):
 
     return redirect(request.META['HTTP_REFERER'])
 
-
+"""
 def filter_flashcards(request, colour):
     print(colour)
     return redirect(request.META['HTTP_REFERER'], {'colour': colour})
-
+"""
 
 def resources(request):
 

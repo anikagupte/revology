@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-br%o=e4@7gl=@)%7=n23l5)c@lym(degnw55)-)*cn-r^m5oox
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost',
+                 '127.0.0.1',
                  'revology.pythonanywhere.com']
 
 
@@ -129,3 +130,5 @@ MEDIA_URL = 'media/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/supernova/login'

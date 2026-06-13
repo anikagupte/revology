@@ -4,3 +4,7 @@ migrations/
 .DS_Store
 __init__.py
 media/
+
+venv/
+__pycache__/
+*.sqlite3

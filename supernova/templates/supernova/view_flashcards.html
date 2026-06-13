@@ -17,9 +17,9 @@
             <div class="column is-two-fifths">
                 <h1 class="title">{{ fcs.title }}</h1>
                 <h3><a href="{% url 'supernova:user_profile' fcs.author %}"> {{ fcs.author }} </a> · {{ fcs.date_created }}</h3>
-                <a href="{% url 'supernova:filter_flashcards' 'R' %}">red</a>
+                <!--<a href="{% url 'supernova:filter_flashcards' 'R' %}">red</a>
                 <a href="{% url 'supernova:filter_flashcards' 'A' %}">amber</a>
-                <a href="{% url 'supernova:filter_flashcards' 'G' %}">green</a>
+                <a href="{% url 'supernova:filter_flashcards' 'G' %}">green</a>-->
                 {% for flashcard in fcs.flashcards.all %}
                 {% if flashcard|get_rag:request.user == 'G' %}
                     <div onclick="toggle(this)">

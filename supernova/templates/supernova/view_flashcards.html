@@ -17,11 +17,15 @@
             <div class="column is-two-fifths">
                 <h1 class="title">{{ fcs.title }}</h1>
                 <h3><a href="{% url 'supernova:user_profile' fcs.author %}"> {{ fcs.author }} </a> · {{ fcs.date_created }}</h3>
-                <!--<a href="{% url 'supernova:filter_flashcards' 'R' %}">red</a>
-                <a href="{% url 'supernova:filter_flashcards' 'A' %}">amber</a>
-                <a href="{% url 'supernova:filter_flashcards' 'G' %}">green</a>-->
+                <div class="buttons">
+                    <a href="?filter=all" class="button {% if colour_filter == 'all' %}is-dark{% endif %}">All</a>
+                    <a href="?filter=R" class="button {% if colour_filter == 'R' %}is-danger{% else %}is-danger is-light{% endif %}">Red</a>
+                    <a href="?filter=A" class="button {% if colour_filter == 'A' %}is-warning{% else %}is-warning is-light{% endif %}">Amber</a>
+                    <a href="?filter=G" class="button {% if colour_filter == 'G' %}is-success{% else %}is-success is-light{% endif %}">Green</a>
+                </div>
                 {% for flashcard in fcs.flashcards.all %}
-                {% if flashcard|get_rag:request.user == 'G' %}
+                {% with rag=flashcard|get_rag:request.user %}
+                {% if colour_filter == 'all' or rag == colour_filter %}
                     <div onclick="toggle(this)">
                         <div class="box">
                             <p id='text' data-front="{{flashcard.front_of_card}}" data-back="{{flashcard.back_of_card}}">
@@ -59,6 +63,7 @@
                         </div>
                     </div>
                 {% endif %}
+                {% endwith %}
                 {% endfor %}
             </div>
 

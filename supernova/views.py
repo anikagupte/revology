@@ -192,10 +192,15 @@ def view_flashcards(request, flashcardset_id):
         
         ranking = Flashcard_rating(user=request.user, flashcard=flashcard, status=s)
         ranking.save()
-
         return redirect(request.META['HTTP_REFERER'])
     
-    return render(request, 'supernova/view_flashcards.html', {'fcs': fcs})
+    # filter cards by colour (default is all colours)
+    colour_filter = request.GET.get('filter', 'all')
+
+    return render(request, 'supernova/view_flashcards.html', {
+        'fcs': fcs,
+        'colour_filter': colour_filter,
+    })
 
 
 @login_required

@@ -343,11 +343,6 @@ def delete_fc(request, fc_id):
 
     return redirect(request.META['HTTP_REFERER'])
 
-"""
-def filter_flashcards(request, colour):
-    print(colour)
-    return redirect(request.META['HTTP_REFERER'], {'colour': colour})
-"""
 
 def resources(request):
 
@@ -355,8 +350,14 @@ def resources(request):
     return render(request, "supernova/resources.html",)
 
 
-# TODO:
-# finish flashcard filtering
+def subject_notes(request, subject_name):
+    subject = get_object_or_404(Subject, name=subject_name)
+    return render(request, 'supernova/subject_notes.html', {
+        'subject': subject,
+        'notes': subject.notes_set.order_by('-date_uploaded'),
+        'pdfs': subject.pdfs.all(),
+    })
+
 
 # TODO v2:
 # user activity tracking (streak?)

@@ -8,13 +8,55 @@
 <body>
     {% include 'supernova/navbar.html' %}
     <div class="section">
-        <h1 class="title"> {{ subject.name }} Notes </h1>
+        <h1 class="title">{{ subject.name }} Notes</h1>
+
+        {% if pdfs %}
+        <hr>
+        <h2 class="subtitle">Revology Notes</h2>
+        <div class="columns is-multiline">
+            {% for pdf in pdfs %}
+            <div class="column is-one-quarter">
+                <a href="{{ pdf.file.url }}" target="_blank" style="text-decoration: none; color: inherit;">
+                    <div class="box" style="padding: 0; overflow: hidden; cursor: pointer;">
+                        <canvas class="pdf-thumb" data-url="{{ pdf.file.url }}" 
+                                style="width: 100%; display: block; border-bottom: 1px solid #eee;"></canvas>
+                        <div style="padding: 12px;">
+                            <span class="icon is-small"><i class="fa-solid fa-file-pdf has-text-danger"></i></span>
+                            <strong>{{ pdf.title }}</strong>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        <hr>
+        {% endif %}
+
+        {% if notes %}
+        <h2 class="subtitle">Community Notes</h2>
         <div class="columns is-multiline">
             {% for note in notes %}
                 {% include 'supernova/note_preview.html' %}
             {% endfor %}
         </div>
+        {% endif %}
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     
+        document.querySelectorAll('.pdf-thumb').forEach(canvas => {
+            const url = canvas.dataset.url;
+            pdfjsLib.getDocument(url).promise.then(pdf => {
+                return pdf.getPage(1);
+            }).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height / 2;
+                page.render({ canvasContext: canvas.getContext('2d'), viewport });
+            });
+        });
+    </script>
 </body>
 </html>

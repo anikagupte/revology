@@ -80,8 +80,16 @@ class Flashcard_rating(models.Model):
 
     def __str__(self):
         return f"{self.flashcard.id} / {self.user.username} / {self.status.colour}"
-    
 
+
+class SubjectPDF(models.Model):
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='pdfs')
+    title = models.CharField(max_length=100)
+    file = models.FileField(upload_to='subject_pdfs/')
+
+    def __str__(self):
+        return f'{self.title} ({self.subject})'
+       
 
 class Activity(models.Model):
     open_notes = "ON"

@@ -320,15 +320,20 @@ def fcs_search(request):
 @login_required
 def reset_ratings(request, fcs_id):
 
-    # reset all ratings of a flashcard set back to red
+    # reset all ratings of a flashcard back to red
     if request.method == "GET":
         s = Status.objects.get(colour='R')
         fcs = Flashcard_set.objects.get(id=fcs_id)
         for flashcard in fcs.flashcards.all():
             fc = Flashcard.objects.get(id=flashcard.id)
-            ranking = Flashcard_rating.objects.get(user=request.user, flashcard=fc)
-            ranking.status = s
-            ranking.save()
+            ranking, created = Flashcard_rating.objects.get_or_create(
+                user=request.user,
+                flashcard=fc,
+                defaults={'status': s}
+            )
+            if not created:
+                ranking.status = s
+                ranking.save()
 
     return redirect(request.META['HTTP_REFERER'])
 

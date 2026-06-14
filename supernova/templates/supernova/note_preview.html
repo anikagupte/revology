@@ -20,8 +20,7 @@
                     <p>
                         <strong><a href="{% url 'supernova:view_note' note.id %}"> {{ note.title }} </a></strong> · {{ note.subject }}
                         <p><small>{{ note.date_uploaded }} @{{ note.author}} </small></p>
-                        First few words of note
-                        <!-- note|preview_note:20 -->
+                        {{ note.notes_content|truncatechars:38 }}
                     </p>
                 </div>
             </div>

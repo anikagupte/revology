@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
-from .models import Subject, Notes, Flashcard_set, Flashcard, Status, Flashcard_rating
+from .models import Subject, Notes, Flashcard_set, Flashcard, Status, Flashcard_rating, SubjectPDF
 from django.contrib.auth.decorators import login_required
+import random
 
 
 @login_required
@@ -15,7 +16,10 @@ def homepage(request):
     nts = Notes.objects.filter(author=profile).order_by('-date_uploaded')
     fcs = Flashcard_set.objects.filter(author=profile).order_by('-date_created')
 
-    return render(request, "supernova/homepage.html", {'user_notes': nts, 'user_flashcards': fcs})
+    # return four random revology notes
+    all_pdfs = list(SubjectPDF.objects.all())
+    featured_pdfs = random.sample(all_pdfs, min(4, len(all_pdfs)))
+    return render(request, "supernova/homepage.html", {'user_notes': nts, 'user_flashcards': fcs, 'featured_pdfs': featured_pdfs})
 
 
 def signup(request):
@@ -197,10 +201,7 @@ def view_flashcards(request, flashcardset_id):
     # filter cards by colour (default is all colours)
     colour_filter = request.GET.get('filter', 'all')
 
-    return render(request, 'supernova/view_flashcards.html', {
-        'fcs': fcs,
-        'colour_filter': colour_filter,
-    })
+    return render(request, 'supernova/view_flashcards.html', {'fcs': fcs, 'colour_filter': colour_filter})
 
 
 @login_required

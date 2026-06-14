@@ -8,28 +8,90 @@
 <body>
     {% if request.user.username %}
     {% include 'supernova/navbar.html' %}
-    <section class="section">
-        <p class="title">Hello, {{request.user.first_name}}</p>
-        <p class="subtitle"> Welcome to Revology!</p>
-        <div class="block">
+
+    <section class="hero" style="background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-vcentered">
+                    <div class="column is-half">
+                        <h1 class="title is-2">Hello, {{ request.user.first_name }} 👋</h1>
+                        <p class="has-text-grey mb-5">Welcome to Revology, where you'll find all the revision resources you need on one place.</p>
+                        <p class="has-text-grey mb-5">Browse our notes library to find notes on your subjects, or have a go flashcards for some active recall.</p>
+                        <p class="has-text-grey mb-5">Prefer making your own resources? We've got you covered!</p>
+                        <div class="buttons mb-0">
+                            <a class="button is-success" href="{% url 'supernova:notes_library' %}">Browse Notes</a>
+                            <a class="button is-success" href="{% url 'supernova:browse_flashcards' %}">Browse Flashcards</a>
+                            <a class="button is-success" href="{% url 'supernova:resources' %}">Extra Resources</a>
+                        </div>
+                        <div class="buttons mt-2" style="padding-left: 82px;">
+                            <a class="button is-light" href="{% url 'supernova:create_notes' %}">Create Notes</a>
+                            <a class="button is-light" href="{% url 'supernova:flashcard_set' %}">Create Flashcards</a>
+                        </div>
+                    </div>
+                    <div class="column is-half">
+                        {% if featured_pdfs %}
+                        <p class="subtitle mb-3">Revology Notes — <a href="{% url 'supernova:notes_library' %}">browse all</a></p>
+                        <div class="columns is-multiline is-variable is-2">
+                            {% for pdf in featured_pdfs %}
+                            <div class="column is-half" style="display: flex;">
+                                <a href="{{ pdf.file.url }}" target="_blank" style="text-decoration: none; color: inherit; width: 100%;">
+                                    <div class="box" style="padding: 0; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; height: 100%;">
+                                        <canvas class="pdf-thumb" data-url="{{ pdf.file.url }}"
+                                                style="width: 100%; display: block; border-bottom: 1px solid #eee;"></canvas>
+                                        <div style="padding: 10px;">
+                                            <span class="icon is-small"><i class="fa-solid fa-file-pdf has-text-danger"></i></span>
+                                            <strong style="font-size: 0.85rem;">{{ pdf.title }}</strong>
+                                            <p style="font-size: 0.75rem; color: #aaa;">{{ pdf.subject }}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section pt-0">
+        <div class="container">
             <p class="subtitle">Your Notes</p>
             <div class="columns is-multiline">
                 {% for note in user_notes %}
                     {% include 'supernova/note_preview.html' %}
                 {% endfor %}
             </div>
-        </div>
-        <!-- create notes button -->
-        <p class="subtitle">Your Flashcards</p>
-        <div class="columns is-multiline">
-            {% for flashcard in user_flashcards %}                    
-                {% include 'supernova/fc_preview.html' %}
-            {% endfor %}
+
+            <p class="subtitle mt-4">Your Flashcards</p>
+            <div class="columns is-multiline">
+                {% for flashcard in user_flashcards %}
+                    {% include 'supernova/fc_preview.html' %}
+                {% endfor %}
             </div>
-        <!-- create flashcards button -->
+        </div>
+    </section>
+
     {% else %}
         <p>You are not signed in. <a href="{% url 'supernova:login' %}"> Login here </a></p>
     {% endif %}
-    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        document.querySelectorAll('.pdf-thumb').forEach(canvas => {
+            const url = canvas.dataset.url;
+            pdfjsLib.getDocument(url).promise.then(pdf => {
+                return pdf.getPage(1);
+            }).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height / 2;
+                page.render({ canvasContext: canvas.getContext('2d'), viewport });
+            });
+        });
+    </script>
+
 </body>
 </html>

@@ -10,104 +10,200 @@
 
 <body>
     {% include 'supernova/navbar.html' %}
+
     <div class="section">
-        <!-- TODO: flashcard filtering system - filter flashcards (at top of page) and only print flashcards of certain colours (default is 3) -->
-        <!-- page refreshes when rating a card which brings the user to the top every time -->
-        <div class="columns is-centered">
-            <div class="column is-two-fifths">
-                <h1 class="title">{{ fcs.title }}</h1>
-                <h3><a href="{% url 'supernova:user_profile' fcs.author %}"> {{ fcs.author }} </a> · {{ fcs.date_created }}</h3>
-                <div class="buttons">
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+
+                <h1 class="title mb-1">{{ fcs.title }}</h1>
+                <p class="mb-4"><a href="{% url 'supernova:user_profile' fcs.author %}">{{ fcs.author }}</a> · {{ fcs.date_created }}</p>
+
+                <div class="buttons mb-5">
                     <a href="?filter=all" class="button {% if colour_filter == 'all' %}is-dark{% endif %}">All</a>
                     <a href="?filter=R" class="button {% if colour_filter == 'R' %}is-danger{% else %}is-danger is-light{% endif %}">Red</a>
                     <a href="?filter=A" class="button {% if colour_filter == 'A' %}is-warning{% else %}is-warning is-light{% endif %}">Amber</a>
                     <a href="?filter=G" class="button {% if colour_filter == 'G' %}is-success{% else %}is-success is-light{% endif %}">Green</a>
                 </div>
-                {% for flashcard in fcs.flashcards.all %}
-                {% with rag=flashcard|get_rag:request.user %}
-                {% if colour_filter == 'all' or rag == colour_filter %}
-                    <div onclick="toggle(this)">
-                        <div class="box">
-                            <p id='text' data-front="{{flashcard.front_of_card}}" data-back="{{flashcard.back_of_card}}">
-                                {{ flashcard.front_of_card }}
-                            </p>
-                            {% if flashcard|get_rag:request.user == 'R' %}
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=R"><span class="icon has-text-danger"><i
-                                        class="fa-solid fa-circle"></i></span></a>
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=A"><span class="icon has-text-warning"><i
-                                        class="fa-regular fa-circle"></i></span></a>
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=G"><span class="icon has-text-success"><i
-                                        class="fa-regular fa-circle"></i></span></a>
-                            {% elif flashcard|get_rag:request.user == 'A' %}
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=R"><span class="icon has-text-danger"><i
-                                        class="fa-regular fa-circle"></i></span></a>
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=A"><span class="icon has-text-warning"><i
-                                        class="fa-solid fa-circle"></i></span></a>
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=G"><span class="icon has-text-success"><i
-                                        class="fa-regular fa-circle"></i></span></a>
-                            {% else %}
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=R"><span class="icon has-text-danger"><i
-                                        class="fa-regular fa-circle"></i></span></a>
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=A"><span class="icon has-text-warning"><i
-                                        class="fa-regular fa-circle"></i></span></a>
-                            <a href="{% url 'supernova:rag' flashcard.id %}?rank=G"><span class="icon has-text-success"><i
-                                        class="fa-solid fa-circle"></i></span></a>
-                            {% endif %}
-                            {% if request.user == fcs.author %}
-                                <div class="columns">
-                                    <div class="column is-offset-11">
-                                        <a href="{% url 'supernova:delete_fc' flashcard.id %}"> <i class="fa-solid fa-trash"></i></a>
-                                    </div>
-                                </div>
-                            {% endif %}
+
+                <div id="card-data" style="display:none;">
+                    {% for flashcard in fcs.flashcards.all %}
+                    {% with rag=flashcard|get_rag:request.user %}
+                    {% if colour_filter == 'all' or rag == colour_filter %}
+                    <div class="card-item"
+                         data-front="{{ flashcard.front_of_card }}"
+                         data-back="{{ flashcard.back_of_card }}"
+                         data-id="{{ flashcard.id }}"
+                         data-rag="{{ rag }}"
+                         data-rag-url-r="{% url 'supernova:rag' flashcard.id %}?rank=R"
+                         data-rag-url-a="{% url 'supernova:rag' flashcard.id %}?rank=A"
+                         data-rag-url-g="{% url 'supernova:rag' flashcard.id %}?rank=G"
+                         {% if request.user == fcs.author %}data-delete-url="{% url 'supernova:delete_fc' flashcard.id %}"{% endif %}>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+
+                <div id="flashcard-container">
+                    <p class="has-text-centered has-text-grey mb-3" id="progress-text"></p>
+
+                    <div id="flashcard" onclick="flipCard()" style="
+                        background: white;
+                        border-radius: 12px;
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+                        min-height: 260px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        padding: 48px;
+                        text-align: center;
+                        transition: background 0.2s;
+                        position: relative;
+                    ">
+                        <p id="card-text" style="font-size: 1.4rem; font-weight: 500;"></p>
+                        <span style="position: absolute; bottom: 16px; right: 20px; font-size: 0.8rem; color: #aaa;" id="flip-hint">Click to flip</span>
+                    </div>
+
+                    <div id="rag-section" style="display:none; margin-top: 28px;">
+                        <p class="has-text-centered has-text-grey mb-3" style="font-size: 0.9rem;">How well did you know this?</p>
+                        <div class="buttons is-centered">
+                            <a id="btn-r" class="button is-danger is-light" style="min-width: 140px;">Not at all</a>
+                            <a id="btn-a" class="button is-warning is-light" style="min-width: 140px;">A little</a>
+                            <a id="btn-g" class="button is-success is-light" style="min-width: 140px;">Got it!</a>
                         </div>
                     </div>
-                {% endif %}
-                {% endwith %}
-                {% endfor %}
-            </div>
 
-            {% if fcs.author == request.user %}
-            <div class="column is-one-fifth">
-                <h3 class="subtitle">Add a new card</h3>
+                    <div class="buttons is-centered mt-5">
+                        <button class="button is-light" onclick="prevCard()">← Prev</button>
+                        <button class="button is-light" onclick="nextCard()">Next →</button>
+                    </div>
+
+                    <div class="has-text-centered mt-2">
+                        <a id="delete-btn" href="#" class="has-text-danger is-size-7" style="display:none;">
+                            <i class="fa-solid fa-trash"></i> Delete this card
+                        </a>
+                    </div>
+                </div>
+
+                <p id="empty-msg" style="display:none;" class="has-text-centered has-text-grey mt-6">No cards match this filter.</p>
+
+                {% if fcs.author == request.user %}
+                <hr class="mt-6">
+                <h3 class="subtitle mt-5">Add a new card</h3>
                 <form class="box" action="{% url 'supernova:view_flashcards' fcs.id %}" method="post">
                     {% csrf_token %}
-                    <div class="field">
-                        <label class="label">Front of Card</label>
-                        <div class="control">
-                            <input class="input" type="text" name="front_of_card" placeholder="" required>                      
+                    <div class="columns">
+                        <div class="field column">
+                            <label class="label">Front of Card</label>
+                            <div class="control">
+                                <input class="input" type="text" name="front_of_card" required>
+                            </div>
+                        </div>
+                        <div class="field column">
+                            <label class="label">Back of Card</label>
+                            <div class="control">
+                                <input class="input" type="text" name="back_of_card" required>
+                            </div>
+                        </div>
+                        <div class="field column is-narrow" style="display:flex; align-items:flex-end;">
+                            <input type="submit" class="button is-success" value="Create">
                         </div>
                     </div>
-                    <div class="field">
-                        <label class="label">Subject</label>
-                        <div class="control">
-                            <input class="input" type="text" name="back_of_card" placeholder="" required>                      
-                        </div>
-                    </div>
-                    <input type="submit" class="button is-success" value="Create">
                 </form>
-                <div>
-                    <form action="{% url 'supernova:reset_ratings' fcs.id %}" method="get">
-                        {% csrf_token %}
-                        <input type="submit" class="button" value="RESET RATINGS">
-                    </form>
-                </div>
+                <form action="{% url 'supernova:reset_ratings' fcs.id %}" method="get">
+                    {% csrf_token %}
+                    <input type="submit" class="button" value="Reset Ratings">
+                </form>
+                {% endif %}
+
             </div>
-            {% endif %}
         </div>
+    </div>
 
-        <script>
-            function toggle(elem) {
-                const p = elem.querySelector('#text');
-                const current = p.textContent.trim();
-                const front = p.dataset.front;
-                const back = p.dataset.back;
+    <script>
+        const cards = Array.from(document.querySelectorAll('.card-item')).map(el => ({
+            front: el.dataset.front,
+            back: el.dataset.back,
+            id: el.dataset.id,
+            rag: el.dataset.rag,
+            urlR: el.dataset.ragUrlR,
+            urlA: el.dataset.ragUrlA,
+            urlG: el.dataset.ragUrlG,
+            deleteUrl: el.dataset.deleteUrl || null,
+        }));
 
-                p.textContent = (current == front) ? back : front;
+        let current = 0;
+        let flipped = false;
 
+        function showCard(index) {
+            if (cards.length === 0) {
+                document.getElementById('flashcard-container').style.display = 'none';
+                document.getElementById('empty-msg').style.display = 'block';
+                return;
             }
-        </script>
 
+            flipped = false;
+            const card = cards[index];
+
+            document.getElementById('card-text').textContent = card.front;
+            document.getElementById('flip-hint').textContent = 'Click to flip';
+            document.getElementById('flashcard').style.background = 'white';
+            document.getElementById('progress-text').textContent = `Card ${index + 1} of ${cards.length}`;
+            document.getElementById('rag-section').style.display = 'none';
+
+            document.getElementById('btn-r').href = card.urlR;
+            document.getElementById('btn-a').href = card.urlA;
+            document.getElementById('btn-g').href = card.urlG;
+
+            ['btn-r', 'btn-a', 'btn-g'].forEach(id => {
+                document.getElementById(id).style.opacity = '0.5';
+            });
+            if (card.rag === 'R') document.getElementById('btn-r').style.opacity = '1';
+            else if (card.rag === 'A') document.getElementById('btn-a').style.opacity = '1';
+            else if (card.rag === 'G') document.getElementById('btn-g').style.opacity = '1';
+
+            const deleteBtn = document.getElementById('delete-btn');
+            if (card.deleteUrl) {
+                deleteBtn.href = card.deleteUrl;
+                deleteBtn.style.display = 'inline';
+            } else {
+                deleteBtn.style.display = 'none';
+            }
+        }
+
+        function flipCard() {
+            if (cards.length === 0) return;
+            flipped = !flipped;
+            const card = cards[current];
+            document.getElementById('card-text').textContent = flipped ? card.back : card.front;
+            document.getElementById('flip-hint').textContent = flipped ? 'Click to flip back' : 'Click to flip';
+            document.getElementById('flashcard').style.background = flipped ? '#f0fdf4' : 'white';
+            document.getElementById('rag-section').style.display = flipped ? 'block' : 'none';
+        }
+
+        function nextCard() {
+            if (current < cards.length - 1) {
+                current++;
+                showCard(current);
+            }
+        }
+
+        function prevCard() {
+            if (current > 0) {
+                current--;
+                showCard(current);
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ') { e.preventDefault(); flipCard(); }
+        });
+
+        showCard(0);
+    </script>
 </body>
 
 </html>

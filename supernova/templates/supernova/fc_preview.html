@@ -4,7 +4,7 @@
             <p>
                 <strong><a href="{% url 'supernova:view_flashcards' flashcard.id %}"> {{ flashcard.title }} </a></strong> · {{ flashcard.subject }}
                 <p><small>{{ flashcard.date_created }} @{{ flashcard.author}} </small></p>
-                no. of cards
+                {{ flashcard.flashcards.count }} cards
             </p>
         </div>
     </div>

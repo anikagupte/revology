@@ -11,9 +11,8 @@
     <div class="section">
         <div class="columns is-centered">
             <div class="column is-four-fifths">
-                <h1 class="title">{{note.title}} {% if request.user == note.author %} <a class="button" href = "{% url 'supernova:edit_notes' note.id %}"><i class="fa-solid fa-pencil"></i></a></h1>
-                <p>{{ note.subject }} · {{ note.date_uploaded }} <a href = "{% url 'supernova:user_profile' note.author %}"> @{{note.author}} </a>
-                {% endif %}</p>
+                <h1 class="title">{{note.title}} {% if request.user == note.author %} <a class="button" href="{% url 'supernova:edit_notes' note.id %}"><i class="fa-solid fa-pencil"></i></a>{% endif %}</h1>
+                <p>{{ note.subject }} · {{ note.date_uploaded }} <a href="{% url 'supernova:user_profile' note.author %}"> @{{note.author}} </a></p>
                 <div class="box">
                     
                     {% if note.image %}

@@ -23,14 +23,14 @@
                 </div>
             </div>
         </form>
-        <h3 class="title is-5"> Your Flashcards </h3>
+        <h3 class="title is-5 mt-4"> Your Flashcards </h3>
         <div class="columns is-multiline">
             {% for flashcard in user_flashcards %}
                 {% include 'supernova/fc_preview.html' %}
             {% endfor %}
         </div>
         <p> or create a <a href="{% url 'supernova:flashcard_set' %}"> new flashcard set </a></p>
-        <h3 class="title is-5"> All Flashcards </h3>
+        <h3 class="title is-5 mt-4"> All Flashcards </h3>
         <div class="columns is-multiline">
             {% for flashcard in flashcards %}
                 {% include 'supernova/fc_preview.html' %}
